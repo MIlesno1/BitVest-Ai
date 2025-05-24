@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useWallet } from '@/context/WalletContext';
 import { useTheme } from '@/context/ThemeContext';
@@ -91,7 +91,28 @@ export default function WelcomeScreen() {
       fontSize: 14,
       fontFamily: 'Inter-Regular',
     },
+    loadingContainer: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: colors.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingText: {
+      color: colors.primary,
+      marginTop: 16,
+      fontSize: 16,
+      fontFamily: 'Inter-Medium',
+    },
   });
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={styles.loadingText}>Loading your wallet...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -106,7 +127,7 @@ export default function WelcomeScreen() {
           />
           <Text style={styles.title}>VerBit Wallet</Text>
           <Text style={styles.subtitle}>
-            Everyday Crypto Wallet with AI Support – Designed for VNST & vBTC
+            Your Gateway to BSC DeFi – Powered by AI
           </Text>
         </View>
 

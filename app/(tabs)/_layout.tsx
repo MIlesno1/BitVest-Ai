@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
-import { Wallet, CircleDollarSign, MessageSquareText, Settings } from 'lucide-react-native';
+import { Wallet, CircleDollarSign, MessageSquareText, Settings, Layout } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 
 export default function TabLayout() {
@@ -68,9 +68,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="dapps"
+        options={{
+          title: 'DApps',
+          tabBarIcon: ({ color, size }) => <Layout size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="assistant"
         options={{
-          title: 'Assistant',
+          title: 'Chat AI',
           tabBarIcon: ({ color, size }) => <MessageSquareText size={size} color={color} />,
         }}
       />

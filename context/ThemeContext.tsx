@@ -43,9 +43,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     text: '#000000',
     subText: '#6E6E73',
     border: '#D1D1D6',
-    primary: '#7B61FF',
-    secondary: '#5856D6',
-    accent: '#3E8BFF',
+    primary: '#FF8C00', // Updated to orange
+    secondary: '#FFA500', // Updated to orange
+    accent: '#FFB74D', // Updated to light orange
     success: '#32D74B',
     warning: '#FF9500',
     error: '#FF3B30',
@@ -57,9 +57,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     text: '#FFFFFF',
     subText: '#8E8E93',
     border: '#38383A',
-    primary: '#7B61FF',
-    secondary: '#5E5CE6',
-    accent: '#5AC8FA',
+    primary: '#FF8C00', // Updated to orange
+    secondary: '#FFA500', // Updated to orange
+    accent: '#FFB74D', // Updated to light orange
     success: '#30D158',
     warning: '#FF9F0A',
     error: '#FF453A',
