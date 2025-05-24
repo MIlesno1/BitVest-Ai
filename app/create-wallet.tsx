@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView
 import { useRouter } from 'expo-router';
 import { useWallet } from '@/context/WalletContext';
 import { useTheme } from '@/context/ThemeContext';
-import { CheckCircle2, Copy, ChevronLeft, ShieldAlert } from 'lucide-react-native';
+import { CircleCheck as CheckCircle2, Copy, ChevronLeft, ShieldAlert } from 'lucide-react-native';
 
 export default function CreateWalletScreen() {
   const router = useRouter();
