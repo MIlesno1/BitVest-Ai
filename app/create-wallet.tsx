@@ -13,6 +13,9 @@ export default function CreateWalletScreen() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
   const [confirmed, setConfirmed] = useState<boolean>(false);
+  const [verificationWords, setVerificationWords] = useState<string[]>([]);
+  const [selectedWords, setSelectedWords] = useState<string[]>([]);
+  const [verificationComplete, setVerificationComplete] = useState<boolean>(false);
 
   useEffect(() => {
     const generateWallet = async () => {
@@ -21,6 +24,16 @@ export default function CreateWalletScreen() {
         await createWallet();
         const phrase = await exportWallet();
         setMnemonic(phrase);
+        // Select 3 random words for verification
+        const words = phrase.split(' ');
+        const indices = [];
+        while (indices.length < 3) {
+          const index = Math.floor(Math.random() * words.length);
+          if (!indices.includes(index)) {
+            indices.push(index);
+          }
+        }
+        setVerificationWords(indices.map(i => words[i]));
       } catch (error) {
         console.error('Error creating wallet:', error);
         Alert.alert('Error', 'Failed to create wallet. Please try again.');
@@ -38,12 +51,29 @@ export default function CreateWalletScreen() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleConfirm = () => {
-    setConfirmed(true);
+  const handleWordSelect = (word: string) => {
+    if (selectedWords.includes(word)) {
+      setSelectedWords(prev => prev.filter(w => w !== word));
+    } else if (selectedWords.length < verificationWords.length) {
+      setSelectedWords(prev => [...prev, word]);
+    }
+  };
+
+  const verifyWords = () => {
+    const isCorrect = verificationWords.every(word => selectedWords.includes(word));
+    if (isCorrect) {
+      setVerificationComplete(true);
+      setConfirmed(true);
+    } else {
+      Alert.alert('Incorrect', 'Please verify your recovery phrase again.');
+      setSelectedWords([]);
+    }
   };
 
   const handleContinue = () => {
-    router.replace('/(tabs)');
+    if (confirmed && verificationComplete) {
+      router.replace('/(tabs)');
+    }
   };
 
   const styles = StyleSheet.create({
@@ -141,34 +171,59 @@ export default function CreateWalletScreen() {
       fontWeight: '600',
       fontFamily: 'Inter-Medium',
     },
-    confirmContainer: {
+    verificationContainer: {
       backgroundColor: colors.card,
       borderRadius: 12,
       padding: 16,
       marginBottom: 24,
     },
-    checkbox: {
-      width: 24,
-      height: 24,
-      borderRadius: 6,
-      borderWidth: 2,
-      borderColor: colors.primary,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 12,
+    verificationTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colors.text,
+      marginBottom: 12,
+      fontFamily: 'Inter-Medium',
     },
-    checkboxFilled: {
+    verificationDescription: {
+      color: colors.subText,
+      marginBottom: 16,
+      fontFamily: 'Inter-Regular',
+    },
+    wordGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'flex-start',
+      gap: 8,
+    },
+    wordButton: {
+      backgroundColor: colors.background,
+      borderRadius: 8,
+      padding: 12,
+      minWidth: '30%',
+      alignItems: 'center',
+    },
+    wordButtonSelected: {
       backgroundColor: colors.primary,
     },
-    confirmRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 8,
-    },
-    confirmText: {
+    wordButtonText: {
       color: colors.text,
-      flex: 1,
       fontFamily: 'Inter-Regular',
+    },
+    wordButtonTextSelected: {
+      color: '#FFFFFF',
+    },
+    verifyButton: {
+      backgroundColor: colors.primary,
+      borderRadius: 12,
+      padding: 16,
+      alignItems: 'center',
+      marginTop: 16,
+    },
+    verifyButtonText: {
+      color: '#FFFFFF',
+      fontSize: 16,
+      fontWeight: '600',
+      fontFamily: 'Inter-Medium',
     },
     button: {
       backgroundColor: colors.primary,
@@ -211,6 +266,7 @@ export default function CreateWalletScreen() {
   }
 
   const mnemonicArray = mnemonic.split(' ');
+  const shuffledWords = [...mnemonicArray].sort(() => Math.random() - 0.5);
 
   return (
     <View style={styles.container}>
@@ -259,16 +315,46 @@ export default function CreateWalletScreen() {
           )}
         </TouchableOpacity>
 
-        <View style={styles.confirmContainer}>
-          <TouchableOpacity style={styles.confirmRow} onPress={handleConfirm}>
-            <View style={[styles.checkbox, confirmed && styles.checkboxFilled]}>
-              {confirmed && <CheckCircle2 size={16} color="#FFFFFF" />}
-            </View>
-            <Text style={styles.confirmText}>
-              I have written down my recovery phrase and stored it in a safe place.
+        {!verificationComplete && (
+          <View style={styles.verificationContainer}>
+            <Text style={styles.verificationTitle}>Verify Recovery Phrase</Text>
+            <Text style={styles.verificationDescription}>
+              Select the following words in any order to verify you've saved your recovery phrase:
+              {'\n\n'}
+              {verificationWords.join(', ')}
             </Text>
-          </TouchableOpacity>
-        </View>
+            
+            <View style={styles.wordGrid}>
+              {shuffledWords.map((word, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.wordButton,
+                    selectedWords.includes(word) && styles.wordButtonSelected,
+                  ]}
+                  onPress={() => handleWordSelect(word)}
+                >
+                  <Text
+                    style={[
+                      styles.wordButtonText,
+                      selectedWords.includes(word) && styles.wordButtonTextSelected,
+                    ]}
+                  >
+                    {word}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity
+              style={styles.verifyButton}
+              onPress={verifyWords}
+              disabled={selectedWords.length !== verificationWords.length}
+            >
+              <Text style={styles.verifyButtonText}>Verify</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <TouchableOpacity
           style={[styles.button, !confirmed && styles.buttonDisabled]}

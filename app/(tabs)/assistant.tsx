@@ -12,7 +12,6 @@ export default function AssistantScreen() {
   const [showHistory, setShowHistory] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
-  // Auto scroll to bottom when messages change
   useEffect(() => {
     if (flatListRef.current && messages.length > 0) {
       flatListRef.current.scrollToEnd({ animated: true });
@@ -21,7 +20,6 @@ export default function AssistantScreen() {
 
   const handleSend = () => {
     if (input.trim().length === 0) return;
-    
     sendMessage(input);
     setInput('');
     setShowCommands(false);
@@ -38,19 +36,26 @@ export default function AssistantScreen() {
     setShowHistory(false);
   };
 
-  // Commands list
   const commands = [
     { command: '/send', description: 'Send tokens to an address' },
     { command: '/receive', description: 'Show your receiving address/QR' },
     { command: '/swap', description: 'Swap between tokens' },
+    { command: '/bridge', description: 'Bridge assets to/from another chain' },
     { command: '/createwallet', description: 'Create a new local wallet' },
     { command: '/importwallet', description: 'Import wallet using seed phrase' },
     { command: '/balance', description: 'Show current token balances' },
+    { command: '/transactions', description: 'List past transactions' },
     { command: '/portfolio', description: 'Show total wallet value in USD' },
-    { command: '/price', description: 'Show price of a token (e.g., /price vbtc)' },
+    { command: '/price', description: 'Show price of a token' },
+    { command: '/chart', description: 'View token chart' },
+    { command: '/gas', description: 'Show BSC gas price and fees' },
+    { command: '/explorer', description: 'Open token/block explorer' },
     { command: '/learn', description: 'Start a structured lesson' },
     { command: '/ask', description: 'Ask anything about crypto' },
     { command: '/tip', description: 'Random crypto or security tip' },
+    { command: '/term', description: 'Explain a crypto term' },
+    { command: '/guide', description: 'Step-by-step how-to guide' },
+    { command: '/news', description: 'Latest crypto news' },
   ];
 
   const styles = StyleSheet.create({
@@ -235,8 +240,8 @@ export default function AssistantScreen() {
           <Bot size={24} color="#FFFFFF" />
         </View>
         <View>
-          <Text style={styles.headerTitle}>AI Assistant</Text>
-          <Text style={styles.headerSubtitle}>Ask me anything about crypto</Text>
+          <Text style={styles.headerTitle}>Chat AI</Text>
+          <Text style={styles.headerSubtitle}>Your crypto assistant</Text>
         </View>
       </View>
 
