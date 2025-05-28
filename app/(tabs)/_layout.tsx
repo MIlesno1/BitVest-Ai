@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
-import { Wallet, CircleDollarSign, MessageSquareText, Settings, LayoutGrid as Layout } from 'lucide-react-native';
+import { Wallet, CircleDollarSign, MessageSquareText, Settings, LayoutGrid as Layout, Coins } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 
 export default function TabLayout() {
@@ -65,6 +65,13 @@ export default function TabLayout() {
         options={{
           title: 'Swap',
           tabBarIcon: ({ color, size }) => <CircleDollarSign size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="mint"
+        options={{
+          title: 'Mint',
+          tabBarIcon: ({ color, size }) => <Coins size={size} color={color} />,
         }}
       />
       <Tabs.Screen
