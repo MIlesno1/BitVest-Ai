@@ -1,20 +1,64 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useWallet } from '@/context/WalletContext';
 import { useTheme } from '@/context/ThemeContext';
 import { Shield, Wallet } from 'lucide-react-native';
+import { BitcoinIcon, VNSTIcon } from '@/components/Icons';
 
 export default function WelcomeScreen() {
   const router = useRouter();
   const { hasWallet, isLoading } = useWallet();
   const { colors } = useTheme();
+  const rotateAnim = new Animated.Value(0);
+  const floatAnim = new Animated.Value(0);
 
   useEffect(() => {
     if (hasWallet && !isLoading) {
       router.replace('/(tabs)');
     }
-  }, [hasWallet, isLoading, router]);
+
+    // Start animations
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(rotateAnim, {
+          toValue: 1,
+          duration: 20000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotateAnim, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatAnim, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [hasWallet, isLoading]);
+
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  const translateY = floatAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -20],
+  });
 
   const styles = StyleSheet.create({
     container: {
@@ -29,19 +73,27 @@ export default function WelcomeScreen() {
     },
     logoContainer: {
       alignItems: 'center',
-      marginBottom: 32,
+      marginBottom: 48,
     },
-    logo: {
-      width: 120,
-      height: 120,
-      marginBottom: 16,
+    animatedContainer: {
+      position: 'relative',
+      width: 200,
+      height: 200,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    iconContainer: {
+      position: 'absolute',
+      width: 48,
+      height: 48,
     },
     title: {
-      fontSize: 28,
+      fontSize: 32,
       fontWeight: 'bold',
       color: colors.text,
       marginBottom: 8,
       fontFamily: 'Inter-Bold',
+      textAlign: 'center',
     },
     subtitle: {
       fontSize: 16,
@@ -49,6 +101,7 @@ export default function WelcomeScreen() {
       textAlign: 'center',
       marginBottom: 48,
       fontFamily: 'Inter-Regular',
+      maxWidth: 280,
     },
     buttonContainer: {
       width: '100%',
@@ -91,43 +144,45 @@ export default function WelcomeScreen() {
       fontSize: 14,
       fontFamily: 'Inter-Regular',
     },
-    loadingContainer: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: colors.background,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    loadingText: {
-      color: colors.primary,
-      marginTop: 16,
-      fontSize: 16,
-      fontFamily: 'Inter-Medium',
-    },
   });
-
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>Loading your wallet...</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <Image
-            source={{
-              uri: 'https://images.pexels.com/photos/844124/pexels-photo-844124.jpeg',
-            }}
-            style={styles.logo}
-            borderRadius={60}
-          />
-          <Text style={styles.title}>VerBit Wallet</Text>
+          <View style={styles.animatedContainer}>
+            <Animated.View
+              style={[
+                styles.iconContainer,
+                {
+                  transform: [
+                    { rotate },
+                    { translateY },
+                    { scale: 1.2 },
+                  ],
+                },
+              ]}
+            >
+              <BitcoinIcon size={48} />
+            </Animated.View>
+            <Animated.View
+              style={[
+                styles.iconContainer,
+                {
+                  transform: [
+                    { rotate: rotate },
+                    { translateY: Animated.multiply(translateY, -1) },
+                    { scale: 1.2 },
+                  ],
+                },
+              ]}
+            >
+              <VNSTIcon size={48} />
+            </Animated.View>
+          </View>
+          <Text style={styles.title}>BitVest Wallet</Text>
           <Text style={styles.subtitle}>
-            Your Gateway to BSC DeFi – Powered by AI
+            Your secure gateway to BSC DeFi – Powered by AI
           </Text>
         </View>
 
