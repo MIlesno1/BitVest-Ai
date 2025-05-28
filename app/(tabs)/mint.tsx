@@ -234,7 +234,7 @@ export default function MintScreen() {
           disabled={!amount || isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
+            <ActivityIndicator size="small\" color="#FFFFFF" />
           ) : (
             <>
               <Text style={styles.buttonText}>
